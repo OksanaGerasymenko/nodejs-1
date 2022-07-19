@@ -20,7 +20,6 @@ async function remove(id) {
    await fetch(`/${id}`, {method: 'DELETE'})
 }
 async function edit(id,note) {
-    console.log(id, note)
     await fetch(`/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

@@ -45,8 +45,6 @@ app.delete('/:id', async (req, res) => {
 
 app.put('/:id', async (req, res) => {
     const id = req.params.id
-    const body = req.body
-    console.log(id, body)
     await editNoteById(id, req.body)
     res.render('index', {
         created: false,
