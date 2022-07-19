@@ -1,9 +1,13 @@
-const fs = require('fs/promises')
-const path = require('path')
-const notesPath = path.join(__dirname, 'db.json')
-const chalk = require('chalk')
+import fs from 'fs/promises'
+import path from 'path'
+import chalk from 'chalk'
+import { fileURLToPath } from 'url'
 
-async function addNote(title) {
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const notesPath = path.join(__dirname, 'db.json')
+
+export async function addNote(title) {
     const notes = await getNotes()
     const note = {
         title,
@@ -14,13 +18,13 @@ async function addNote(title) {
     console.log(chalk.bgGreen(`${title} note has been added`))
 }
 
-async function getNotes() {
+export async function getNotes() {
     const data = await fs.readFile(notesPath, {encoding: 'utf-8'})
     const notes = JSON.parse(data)
     return Array.isArray(notes) ? notes : []
 }
 
-async function printNotes() {    
+export async function printNotes() {    
     const notes = await getNotes()
     console.log(chalk.bgBlue('Notes list:'))
     let i=1;
@@ -30,7 +34,7 @@ async function printNotes() {
     })
 }
 
-async function removeNoteById(noteId) {
+export async function removeNoteById(noteId) {
     const notes = await getNotes()
     const index = notes.findIndex(note => note.id === noteId)
     if (index > -1) {
@@ -39,9 +43,12 @@ async function removeNoteById(noteId) {
         console.log(chalk.bgGreen(`note with id ${noteId} has been removed`))
     } else console.log(chalk.bgRed(`note with id ${noteId} not founded`))
 }
-module.exports = {
-    addNote,
-    getNotes,
-    printNotes,
-    removeNoteById
+
+export async function editNoteById(noteId, note) {
+    const notes = await getNotes()
+    const index = notes.findIndex(note => note.id === noteId)
+    if (index > -1) {
+        notes[index]= {...notes[index], ...note}
+        await fs.writeFile(notesPath, JSON.stringify(notes))
+    }
 }
