@@ -7,12 +7,40 @@ document.addEventListener('click', event => {
     } else if (event.target.dataset.type === "edit") {
         const id = event.target.dataset.id
         const title = event.target.closest('div').previousElementSibling.innerText
-        const newTitle = prompt('Enter new title', title)
-        if (newTitle) {
-            edit(id, {title:newTitle}).then(()=>{
-                event.target.closest('div').previousElementSibling.innerText = newTitle
-            })
-        }
+        const li = event.target.closest('li')
+        const liInnerHTML = li.innerHTML
+
+        const input = document.createElement('input')        
+        input.setAttribute('type', 'text')
+        input.setAttribute('value', title)
+
+        const btnSave = document.createElement('button')
+        btnSave.className = 'btn btn-primary'
+        btnSave.innerText = 'Сохранить'
+        btnSave.addEventListener('click', () => {
+            const newTitle = input.value
+            if (newTitle) {
+                edit(id, {title:newTitle}).then(() =>{
+                    li.innerHTML = liInnerHTML
+                    li.firstElementChild.innerHTML = `${newTitle}`
+                })
+            }
+        })
+
+        const btnCancel = document.createElement('button')
+        btnCancel.className = 'btn btn-danger'
+        btnCancel.innerText = 'Отменить'
+        btnCancel.addEventListener('click', () =>{
+            li.innerHTML = liInnerHTML
+        })
+
+        const btnContainer = document.createElement('div')
+        btnContainer.append(btnSave, btnCancel)
+        li.innerHTML = ''
+        li.append(input, btnContainer)
+        
+        
+        
     }
 })
 
